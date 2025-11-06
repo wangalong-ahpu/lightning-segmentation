@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
 from models.base_model import BaseSegModel
 import segmentation_models_pytorch as smp
 

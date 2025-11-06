@@ -31,7 +31,6 @@ class BaseSegModel(pl.LightningModule):
         self.mode = "multiclass"
     
     def forward(self, x):
-        # 推理方法
         return self.model(x)
     
     def shared_step(self, batch, stage):
