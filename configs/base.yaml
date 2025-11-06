@@ -1,0 +1,27 @@
+# 基础配置（所有实验共享）
+dataset:
+  name: CamVid
+  root: ./datasets/CamVid
+  num_classes: 13
+
+model:
+  type: FPN
+  backbone: resnext50_32x4d
+  in_channels: 3
+  encoder_weights: null
+
+training:
+  device: cuda
+  batch_size: 4
+  num_workers: 2
+  epochs: 30
+  seed: 42
+  lr: 0.0002
+  scheduler: cosine
+  loss: dice
+  T_max: 10
+  eta_min: 0.00001
+
+outputs:
+  log_dir: ./outputs/logs
+  ckpt_dir: ./outputs/checkpoints

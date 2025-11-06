@@ -1,0 +1,9 @@
+# 验证配置
+defaults:
+  - base.yaml
+
+validation:
+  metrics: 
+    - per_image_iou
+    - dataset_iou
+  log_every_n_steps: 1
