@@ -2,19 +2,24 @@
 # coding: utf-8
 import os
 import torch
-import torchvision.io as io
+import torchvision
 from torch.utils.data import Dataset
 
 
 class CamVidDataset(Dataset):
     """CamVid Dataset"""
     
-    def __init__(self, images_dir, masks_dir, transform=None):
+    def __init__(self, images_dir, masks_dir, transform=None, indices=None):
         self.images_dir = images_dir
         self.masks_dir = masks_dir
         self.transform = transform
         self.images = sorted(os.listdir(images_dir))
         self.masks = sorted(os.listdir(masks_dir))
+        
+        # 如果提供了indices，则只使用指定的索引
+        if indices is not None:
+            self.images = [self.images[i] for i in indices]
+            self.masks = [self.masks[i] for i in indices]
         
     def __len__(self):
         return len(self.images)
@@ -25,8 +30,8 @@ class CamVidDataset(Dataset):
         mask_path = os.path.join(self.masks_dir, self.masks[idx])
         
         # 使用torchvision.io读取真实图像和掩码
-        image = io.read_image(image_path)  # C,H,W格式
-        mask = io.read_image(mask_path)    # C,H,W格式
+        image = torchvision.io.read_image(image_path)  # C,H,W格式
+        mask = torchvision.io.read_image(mask_path)    # C,H,W格式
         
         # 转换图像数据类型为float并归一化到[0,1]范围
         image = image.float() / 255.0

@@ -1,8 +1,12 @@
 # 基础配置（所有实验共享）
 dataset:
-  name: CamVid
-  root: ./datasets/CamVid
-  num_classes: 13
+  name: signature_seg_20251110
+  root: ./datasets/signature_seg_20251110
+  num_classes: 2
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
 
 model:
   type: FPN

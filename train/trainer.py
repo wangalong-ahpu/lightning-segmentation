@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
+import torch
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger
@@ -29,6 +30,7 @@ def create_trainer(config):
         max_epochs=config.training.epochs,
         accelerator="gpu" if config.training.device == "cuda" else "cpu",
         devices="auto",
+        strategy="ddp" if torch.cuda.device_count() > 1 else "auto",  # 多GPU时启用DDP策略
         logger=logger,
         callbacks=[checkpoint_callback],
         log_every_n_steps=1,

@@ -3,7 +3,8 @@ datasets/CamVid
 __pycache__/
 *.py[cod]
 *$py.class
-
+*.png
+*.zip
 # C extensions
 *.so
 
