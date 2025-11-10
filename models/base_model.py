@@ -8,9 +8,9 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
 import torch
+import omegaconf
 import pytorch_lightning as pl
 import segmentation_models_pytorch as smp
-
 
 class BaseSegModel(pl.LightningModule):
     """基础分割模型类"""
@@ -145,10 +145,34 @@ class BaseSegModel(pl.LightningModule):
     
     def _build_loss(self):
         """构建损失函数"""
-        if self.config.training.loss == "dice":
-            return smp.losses.DiceLoss(smp.losses.MULTICLASS_MODE, from_logits=True)
+        from .loss import get_loss_function
+        
+        # 获取损失函数配置
+        loss_config = self.config.training.loss
+        
+        # 如果是字符串类型，则直接使用get_loss_function获取
+        if isinstance(loss_config, str):
+            return get_loss_function(loss_config)
+        
+        # 如果是字典类型，则表示是组合损失函数
+        elif isinstance(loss_config, (dict, omegaconf.dictconfig.DictConfig)):
+            # 字典格式: {"loss_name1": weight1, "loss_name2": weight2, ...}
+            loss_functions = {}
+            for loss_name, weight in loss_config.items():
+                loss_functions[loss_name] = (get_loss_function(loss_name), weight)
+            
+            # 返回一个计算组合损失的函数
+            def combined_loss(logits, targets):
+                total_loss = 0
+                for loss_name, (loss_fn, weight) in loss_functions.items():
+                    loss_value = loss_fn(logits, targets)
+                    total_loss += weight * loss_value
+                return total_loss
+            
+            return combined_loss
+        
         else:
-            raise ValueError(f"Unsupported loss function: {self.config.training.loss}")
+            raise ValueError(f"Unsupported loss config type: {type(loss_config)}")
     
     def _build_model(self):
         """构建模型 - 子类需要实现"""

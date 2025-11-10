@@ -18,7 +18,7 @@ training:
   seed: 42
   lr: 0.0002
   scheduler: cosine
-  loss: dice
+  loss: dice  # 单一损失
   T_max: 10
   eta_min: 0.00001
 
