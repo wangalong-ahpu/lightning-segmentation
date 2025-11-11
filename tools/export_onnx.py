@@ -114,10 +114,10 @@ if __name__ == '__main__':
     main()
 
     # # 导出FPN模型
-    # python export_onnx.py --checkpoint ./outputs/checkpoints/best-model-epoch=149-valid_dataset_iou=0.9731.ckpt
+    # python tools/export_onnx.py --checkpoint ./outputs/checkpoints/best-model-epoch=149-valid_dataset_iou=0.9731.ckpt
 
     # # 导出UNet模型
-    # python export_onnx.py --model_type unet --config configs/model/unet.yaml --checkpoint ./outputs/checkpoints/best-model-epoch=149-valid_dataset_iou=0.9731.ckpt
+    # python tools/export_onnx.py --model_type unet --config configs/model/unet.yaml --checkpoint ./outputs/checkpoints/best-model-epoch=149-valid_dataset_iou=0.9731.ckpt
 
     # # 使用外部数据格式导出
-    # python export_onnx.py --model_type unet --config configs/model/unet.yaml --checkpoint ./outputs/checkpoints/best-model-epoch=149-valid_dataset_iou=0.9731.ckpt --external_data
+    # python tools/export_onnx.py --model_type unet --config configs/model/unet.yaml --checkpoint ./outputs/checkpoints/best-model-epoch=149-valid_dataset_iou=0.9731.ckpt --external_data
