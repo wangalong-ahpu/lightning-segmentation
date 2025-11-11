@@ -1,6 +1,6 @@
-# UNet 图像分割项目
+# 基于 PyTorch Lightning 的图像分割训练框架
 
-基于 PyTorch Lightning 的图像分割项目，支持多种模型架构（UNet、FPN 等）和数据集。
+基于 PyTorch Lightning 的图像分割训练框架，支持多种模型架构（UNet、FPN 等）。
 
 ## 项目结构
 
@@ -73,6 +73,53 @@ python train/main.py --config configs/train.yaml --model unet
 python train/main.py --config configs/model/unet.yaml --model unet
 ```
 
+## 导出ONNX模型
+
+训练完成后，可以将PyTorch模型导出为ONNX格式以便部署：
+
+```bash
+# 导出FPN模型为ONNX格式
+python export_onnx.py --model_type fpn --config configs/train.yaml --checkpoint path/to/checkpoint.ckpt
+
+# 导出UNet模型为ONNX格式
+python export_onnx.py --model_type unet --config configs/model/unet.yaml --checkpoint path/to/checkpoint.ckpt
+
+# 使用特定参数导出（如指定opset版本）
+python export_onnx.py --model_type unet --config configs/model/unet.yaml --checkpoint path/to/checkpoint.ckpt --opset 18
+```
+
+导出的ONNX模型将保存在与检查点相同的目录下，文件名与检查点相同但后缀为`.onnx`。
+
+## 测试ONNX模型
+
+可以使用以下脚本测试ONNX模型的推理能力：
+
+```bash
+# 批量测试文件夹中的图像
+python test_onnx.py
+```
+
+默认情况下，脚本会处理`datasets/tests`文件夹中的所有图像，并将结果保存到`datasets/test_results`文件夹。
+
+## 使用ONNX模型进行推理
+
+项目还提供了一个封装好的类用于ONNX模型推理：
+
+```python
+from segmentation_onnx import SegmentationONNX
+
+# 初始化模型
+model = SegmentationONNX(model_path="path/to/model.onnx", input_size=(256, 256))
+
+# 处理单张图像
+original_image = cv2.imread("path/to/image.jpg")
+prediction = model.infer(original_image)
+result_image = model.visualize_result(original_image, prediction)
+
+# 批量处理文件夹中的图像
+# 详情请查看 segmentation_onnx.py 中的主函数部分
+```
+
 ## 配置说明
 
 所有训练参数都在 `configs/` 目录下的 YAML 文件中定义：
@@ -89,16 +136,12 @@ python train/main.py --config configs/model/unet.yaml --model unet
 4. **易于扩展**：支持添加新模型、数据集和评估指标
 5. **日志记录**：集成 TensorBoard 日志记录
 6. **模型检查点**：自动保存最佳模型
+7. **ONNX支持**：支持将训练好的模型导出为ONNX格式，便于部署
 
 ## 支持的模型
 
 - UNet
 - FPN (Feature Pyramid Network)
 
-## 支持的数据集
-
-- CamVid
-
-## 许可证
-
-MIT
+## 致谢
+[segmentation_models.pytorch](https://github.com/qubvel-org/segmentation_models.pytorch)
